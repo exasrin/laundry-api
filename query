@@ -1,0 +1,19 @@
+-- CREATE TABLE m_customer (
+-- 	id VARCHAR(50) primary key,
+-- 	name VARCHAR(100),
+-- 	phone_number VARCHAR(50),
+-- 	address VARCHAR(250)
+-- )
+
+-- CREATE TABLE m_uom (
+-- 	id VARCHAR(50) primary key,
+-- 	type VARCHAR(50)
+-- )
+
+-- CREATE TABLE m_product (
+--     id VARCHAR(50) PRIMARY KEY,
+--     name VARCHAR(50),
+--     price INT,
+--     uom_id VARCHAR(100),
+--     FOREIGN KEY (uom_id) REFERENCES m_uom(id)
+-- );
