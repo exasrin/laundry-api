@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"go-api-enigma/config"
 
@@ -21,24 +20,17 @@ func main() {
 		fmt.Println(error)
 	}
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		cfg.DbConfig.Host,
-		cfg.DbConfig.Port,
-		cfg.DbConfig.User,
-		cfg.DbConfig.Password,
-		cfg.DbConfig.Name,
-	)
-
-	db, error := sql.Open(cfg.DbConfig.Driver, dsn)
+	conn, error := config.NewDbCOnnection(cfg)
 	if error != nil {
 		fmt.Println(error)
 	}
+	db := conn.Conn()
 
 	Customer := Customer{
-		Id:          "1",
-		Name:        "Alffathir Rasyid Sulaiaman",
+		Id:          "2",
+		Name:        "Rasyid Sulaiaman",
 		PhoneNumber: "081234567890",
-		Address:     "Jakarta",
+		Address:     "Kendari",
 	}
 
 	_, error = db.Exec("INSERT INTO m_customer VALUES ($1, $2, $3, $4)",
