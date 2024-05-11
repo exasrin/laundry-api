@@ -19,7 +19,7 @@ type uomRepository struct {
 
 // DeleteById implements UomRepository.
 func (u *uomRepository) DeleteById(id string) error {
-	_, err := u.db.Exec("DELETE m_uom WHERE id = $1", id)
+	_, err := u.db.Exec("DELETE FROM m_uom WHERE id = $1", id)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func (u *uomRepository) Save(uom model.Uom) error {
 
 // Update implements UomRepository.
 func (u *uomRepository) Update(uom model.Uom) error {
-	_, err := u.db.Exec("UPDATE m_uom SET type = $2 WHERE id=&1", uom.Id, uom.Type)
+	_, err := u.db.Exec("UPDATE m_uom SET type = $2 WHERE id=$1", uom.Id, uom.Type)
 	if err != nil {
 		return err
 	}

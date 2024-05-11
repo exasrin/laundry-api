@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go-api-enigma/config"
+	"go-api-enigma/model"
 	"go-api-enigma/repository"
 
 	_ "github.com/lib/pq"
@@ -55,16 +56,33 @@ func main() {
 	// })
 
 	// getById
-	uomRepo := repository.NewUomRepository(db)
-	uom, err := uomRepo.FindById("1")
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(uom)
+	// uomRepo := repository.NewUomRepository(db)
+	// uom, err := uomRepo.FindById("1")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// fmt.Println(uom)
 
-	uoms, err := uomRepo.FindAll()
+	// uoms, err := uomRepo.FindAll()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// fmt.Println(uoms)
+
+	// using usecase
+	// uomRepo := repository.NewUomRepository(db)
+	// uomUC := usecase.NewUomUseCase(uomRepo)
+	// err := uomUC.Update(model.Uom{Id: "3", Type: "Satuan"})
+	// fmt.Println(err)
+
+	productRepo := repository.NewProductRepository(db)
+	err := productRepo.Save(model.Product{
+		Id:    "1",
+		Name:  "Setrika",
+		Price: 10000,
+		Uom:   model.Uom{Id: "1"},
+	})
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(uoms)
 }
