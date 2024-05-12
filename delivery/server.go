@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"go-api-enigma/config"
 	"go-api-enigma/delivery/controller"
-	"go-api-enigma/repository"
-	"go-api-enigma/usecase"
+	"go-api-enigma/manager"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	uomUc usecase.UomUseCase
+	ucManager manager.UseCaseManager
 	// productUc usecase.ProductUseCase
 	engine *gin.Engine
+	host   string
 }
 
 func (s *Server) Run() {
-	err := s.engine.Run()
+	err := s.engine.Run(s.host)
 	if err != nil {
 		panic(err)
 	}
@@ -25,7 +25,7 @@ func (s *Server) Run() {
 
 func (s *Server) initControllers() {
 	// Inisialisasi controller
-	controller.NewUomController(s.uomUc, s.engine)
+	controller.NewUomController(s.ucManager.UomUseCase()).Route(s.engine)
 }
 
 func NewServer() *Server {
@@ -34,26 +34,19 @@ func NewServer() *Server {
 		fmt.Println(error)
 	}
 
-	conn, error := config.NewDbCOnnection(cfg)
+	infraManager, error := manager.NewInfraManager(cfg)
 	if error != nil {
 		fmt.Println(error)
 	}
-	db := conn.Conn()
-
-	// instace repo
-	uomRepo := repository.NewUomRepository(db)
-	// productRepo := repository.NewProductRepository(db)
-
-	// instance Uc
-	uomUC := usecase.NewUomUseCase(uomRepo)
-
-	// controller
+	rm := manager.NewRepoManager(infraManager)
+	ucm := manager.NewUseCaseManager(rm)
+	host := fmt.Sprintf("%s:%s", cfg.ApiHost, cfg.ApiPort)
 	engine := gin.Default()
 	server := Server{
-		uomUc:  uomUC,
-		engine: engine,
+		ucManager: ucm,
+		engine:    engine,
+		host:      host,
 	}
 	server.initControllers()
-
 	return &server
 }

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"go-api-enigma/model"
 	"go-api-enigma/usecase"
 	"net/http"
@@ -10,7 +11,7 @@ import (
 )
 
 type UomController struct {
-	uomUC  usecase.UomUseCase
+	uomUC usecase.UomUseCase
 }
 
 func (u *UomController) createUomHandler(c *gin.Context) {
@@ -43,20 +44,58 @@ func (u *UomController) getById(c *gin.Context) {
 	uom, err := u.uomUC.FindById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message" : err.Error(),
+			"message": err.Error(),
 		})
 		return
 	}
 	c.JSON(http.StatusOK, uom)
 }
 
-func NewUomController(uomUc usecase.UomUseCase, engine *gin.Engine) {
-	controller := UomController{
-		uomUC:  uomUc,
+func (u *UomController) updateHandler(c *gin.Context) {
+	fmt.Println("==========================")
+	var uom model.Uom
+	if err := c.ShouldBindJSON(&uom); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
 	}
+	if err := u.uomUC.Update(uom); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "successfully update uom",
+	})
+}
 
+func (u *UomController) deleteHandler(c *gin.Context) {
+	id := c.Param("id")
+	if err := u.uomUC.Delete(id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	message := fmt.Sprintf("successfully delete uom with id %s", id)
+	c.JSON(http.StatusOK, gin.H{
+		"message": message,
+	})
+}
+
+func (u *UomController) Route(engine *gin.Engine) {
 	rg := engine.Group("/api/v1")
-	rg.POST("/uoms", controller.createUomHandler)
-	rg.GET("/uoms", controller.listUomHandler)
-	rg.GET("/uoms/:id", controller.getById)
+	rg.POST("/uoms", u.createUomHandler)
+	rg.GET("/uoms", u.listUomHandler)
+	rg.GET("/uoms/:id", u.getById)
+	rg.PUT("/uoms", u.updateHandler)
+	rg.DELETE("/uoms/:id", u.deleteHandler)
+}
+
+func NewUomController(uomUc usecase.UomUseCase) *UomController {
+	return &UomController{
+		uomUC: uomUc,
+	}
 }

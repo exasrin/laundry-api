@@ -1,22 +1,21 @@
-package config
+package manager
 
 import (
 	"database/sql"
 	"fmt"
-
-	_ "github.com/lib/pq"
+	"go-api-enigma/config"
 )
 
-type DbConnection interface {
+type InfraManager interface {
 	Conn() *sql.DB
 }
 
-type dbConnection struct {
+type infraManager struct {
 	db  *sql.DB
-	cfg *Config
+	cfg *config.Config
 }
 
-func (d *dbConnection) initDb() error {
+func (d *infraManager) initDb() error {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		d.cfg.DbConfig.Host,
 		d.cfg.DbConfig.Port,
@@ -34,19 +33,17 @@ func (d *dbConnection) initDb() error {
 	return nil
 }
 
-func (d *dbConnection) Conn() *sql.DB {
+func (d *infraManager) Conn() *sql.DB {
 	return d.db
 }
 
-// constructor
-func NewDbCOnnection(cfg *Config) (DbConnection, error) {
-	conn := &dbConnection{
+func NewInfraManager(cfg *config.Config) (InfraManager, error) {
+	conn := &infraManager{
 		cfg: cfg,
 	}
 	err := conn.initDb()
 	if err != nil {
 		return nil, err
 	}
-
 	return conn, nil
 }

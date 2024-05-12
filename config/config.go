@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"go-api-enigma/util/common"
 	"os"
 )
 
@@ -14,11 +15,21 @@ type DbConfig struct {
 	Driver   string
 }
 
+type ApiConfig struct {
+	ApiHost string
+	ApiPort string
+}
+
 type Config struct {
 	DbConfig
+	ApiConfig
 }
 
 func (c *Config) ReadConfig() error {
+	err := common.LoadEnv()
+	if err != nil {
+		return err
+	}
 	c.DbConfig = DbConfig{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
@@ -27,8 +38,13 @@ func (c *Config) ReadConfig() error {
 		Password: os.Getenv("DB_PASSWORD"),
 		Driver:   os.Getenv("DB_DRIVER"),
 	}
+	c.ApiConfig = ApiConfig{
+		ApiHost: os.Getenv("API_HOST"),
+		ApiPort: os.Getenv("API_PORT"),
+	}
 	if c.DbConfig.Host == "" || c.DbConfig.Port == "" || c.DbConfig.Name == "" ||
-		c.DbConfig.User == "" || c.DbConfig.Password == "" || c.DbConfig.Driver == "" {
+		c.DbConfig.User == "" || c.DbConfig.Password == "" || c.DbConfig.Driver == "" ||
+		c.ApiConfig.ApiHost == "" || c.ApiConfig.ApiPort == "" {
 		return fmt.Errorf("missing required environment variable")
 	}
 	return nil
