@@ -11,7 +11,6 @@ import (
 
 type UomController struct {
 	uomUC  usecase.UomUseCase
-	router *gin.Engine
 }
 
 func (u *UomController) createUomHandler(c *gin.Context) {
@@ -54,7 +53,6 @@ func (u *UomController) getById(c *gin.Context) {
 func NewUomController(uomUc usecase.UomUseCase, engine *gin.Engine) {
 	controller := UomController{
 		uomUC:  uomUc,
-		router: engine,
 	}
 
 	rg := engine.Group("/api/v1")
