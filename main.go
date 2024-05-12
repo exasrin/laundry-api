@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"go-api-enigma/config"
-	"go-api-enigma/model"
-	"go-api-enigma/repository"
+	"go-api-enigma/delivery"
+	// "go-api-enigma/model"
+	// "net/http"
 
+	// "github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
@@ -17,72 +17,53 @@ type Customer struct {
 }
 
 func main() {
-	cfg, error := config.NewConfig()
-	if error != nil {
-		fmt.Println(error)
-	}
+	// routerEngine := gin.Default()
 
-	conn, error := config.NewDbCOnnection(cfg)
-	if error != nil {
-		fmt.Println(error)
-	}
-	db := conn.Conn()
-
-	// Customer := Customer{
-	// 	Id:          "2",
-	// 	Name:        "Rasyid Sulaiaman",
-	// 	PhoneNumber: "081234567890",
-	// 	Address:     "Kendari",
-	// }
-
-	// _, error = db.Exec("INSERT INTO m_customer VALUES ($1, $2, $3, $4)",
-	// 	Customer.Id,
-	// 	Customer.Name,
-	// 	Customer.PhoneNumber,
-	// 	Customer.Address,
-	// )
-
-	// if error != nil {
-	// 	fmt.Println(error)
-	// }
-
-	// fmt.Println("success inserting data")
-
-	// savee
-	// uomRepo := repository.NewUomRepository(db)
-	// uomRepo.Save(model.Uom{
-	// 	Id:   "2",
-	// 	Name: "ons",
+	// routerEngine.GET("/hello-world", func(ctx *gin.Context) {
+	// 	ctx.String(http.StatusOK, "Hello World")
 	// })
 
-	// getById
-	// uomRepo := repository.NewUomRepository(db)
-	// uom, err := uomRepo.FindById("1")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(uom)
+	// // param/ path variable
+	// // http://localhost:8080/hello-world/asrin
+	// routerEngine.GET("/hello-world/:id", func(ctx *gin.Context) {
+	// 	id := ctx.Param("id")
+	// 	ctx.String(http.StatusOK, "Berhasil mendapatkan id %s", id)
+	// })
 
-	// uoms, err := uomRepo.FindAll()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// fmt.Println(uoms)
+	// // query param
+	// // http://localhost:8080/products?name=asrin
+	// routerEngine.GET("/products", func(ctx *gin.Context) {
+	// 	name := ctx.Query("name")
+	// 	ctx.String(http.StatusOK, "Berhasil mencari product dengan nama %s", name)
+	// })
 
-	// using usecase
-	// uomRepo := repository.NewUomRepository(db)
-	// uomUC := usecase.NewUomUseCase(uomRepo)
-	// err := uomUC.Update(model.Uom{Id: "3", Type: "Satuan"})
-	// fmt.Println(err)
+	// routerEngine.GET("/products2/:id", func(ctx *gin.Context) {
+	// 	id := ctx.Param("id")
+	// 	product := model.Product{
+	// 		Id:    id,
+	// 		Name:  "setrika + cuci baju",
+	// 		Price: 100000,
+	// 		Uom: model.Uom{
+	// 			Id:   "1",
+	// 			Type: "kg",
+	// 		},
+	// 	}
+	// 	ctx.JSON(http.StatusOK, product)
+	// })
 
-	productRepo := repository.NewProductRepository(db)
-	err := productRepo.Save(model.Product{
-		Id:    "1",
-		Name:  "Setrika",
-		Price: 10000,
-		Uom:   model.Uom{Id: "1"},
-	})
-	if err != nil {
-		fmt.Println(err)
-	}
+	// // POSY
+	// routerEngine.POST("/products", func(ctx *gin.Context) {
+	// 	var product model.Product
+	// 	// shouldBind JSON -> struct
+	// 	err := ctx.ShouldBindJSON(&product)
+	// 	if err != nil {
+	// 		ctx.JSON(http.StatusBadRequest, err.Error())
+	// 		return
+	// 	}
+	// 	ctx.JSON(http.StatusCreated, product)
+	// })
+
+	// routerEngine.Run()
+
+	delivery.NewServer().Run()
 }
