@@ -3,8 +3,10 @@ package controller
 import (
 	"fmt"
 	"go-api-enigma/model"
+	"go-api-enigma/model/dto"
 	"go-api-enigma/usecase"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -31,12 +33,32 @@ func (u *UomController) createUomHandler(c *gin.Context) {
 }
 
 func (u *UomController) listUomHandler(c *gin.Context) {
-	uoms, err := u.uomUC.FindAll()
+	// Get All Uoms
+	// uoms, err := u.uomUC.FindAll()
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
+	// c.JSON(http.StatusOK, uoms)
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	size, _ := strconv.Atoi(c.DefaultQuery("size", "1"))
+	uoms, paging, err := u.uomUC.Paging(dto.PageRequest{
+		Page: page,
+		Size: size,
+	})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
 	}
-	c.JSON(http.StatusOK, uoms)
+
+	response := gin.H{
+		"message": "successfully get uoms",
+		"data":    uoms,
+		"paging":  paging,
+	}
+
+	c.JSON(200, response)
 }
 
 func (u *UomController) getById(c *gin.Context) {

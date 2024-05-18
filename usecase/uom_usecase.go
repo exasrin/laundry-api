@@ -3,6 +3,7 @@ package usecase
 import (
 	"fmt"
 	"go-api-enigma/model"
+	"go-api-enigma/model/dto"
 	"go-api-enigma/repository"
 )
 
@@ -12,10 +13,16 @@ type UomUseCase interface {
 	FindAll() ([]model.Uom, error)
 	Update(payload model.Uom) error
 	Delete(id string) error
+	Paging(payload dto.PageRequest) ([]model.Uom, dto.Paging, error)
 }
 
 type uomUseCase struct {
 	repo repository.UomRepository
+}
+
+// Paging implements UomUseCase.
+func (u *uomUseCase) Paging(payload dto.PageRequest) ([]model.Uom, dto.Paging, error) {
+	return u.repo.Paging(payload)
 }
 
 // CreateNew implements UomUseCase.
